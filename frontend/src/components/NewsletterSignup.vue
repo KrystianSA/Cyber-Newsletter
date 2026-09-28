@@ -2,6 +2,7 @@
 import { computed, ref } from 'vue'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
 
 const email = ref('')
 const status = ref('idle') // idle | loading | success | error
@@ -28,11 +29,30 @@ async function handleSubmit() {
   status.value = 'loading'
   errorMessage.value = ''
 
-  // Placeholder: symulowany zapis. Podłącz tu prawdziwą usługę newsletterową
-  // (patrz README.md, sekcja "Podłączenie realnego newslettera").
-  await new Promise((resolve) => setTimeout(resolve, 600))
+  try {
+    const res = await fetch(`${API_URL}/subscribers`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: value }),
+    })
 
-  status.value = 'success'
+    if (res.status === 409) {
+      status.value = 'error'
+      errorMessage.value = 'Ten adres e-mail jest już zapisany.'
+      return
+    }
+
+    if (!res.ok) {
+      status.value = 'error'
+      errorMessage.value = 'Coś poszło nie tak. Spróbuj ponownie.'
+      return
+    }
+
+    status.value = 'success'
+  } catch {
+    status.value = 'error'
+    errorMessage.value = 'Brak połączenia z serwerem. Spróbuj ponownie.'
+  }
 }
 
 function handleReset() {
