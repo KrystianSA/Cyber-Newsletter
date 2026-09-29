@@ -8,6 +8,7 @@ Strona z formularzem zapisu do newslettera o cyberbezpieczeństwie. Adresy e-mai
 - **Backend:** Python, FastAPI, SQLAlchemy, Pydantic
 - **Baza danych:** PostgreSQL (Docker Compose)
 - **Narzędzia:** npm, uv
+- **AI:** projekt zbudowany z pomocą [Claude Code](https://claude.com/claude-code) (asystent AI do programowania w terminalu)
 
 ## Uruchomienie
 
