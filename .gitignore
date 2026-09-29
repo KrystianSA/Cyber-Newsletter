@@ -23,4 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
+#Claude context
 CLAUDE.md
+
+#secrets
+.env

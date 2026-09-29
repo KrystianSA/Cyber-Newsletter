@@ -1,17 +1,17 @@
+import os
 from pathlib import Path
 
+from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import DeclarativeBase, sessionmaker
 
-DATA_DIR = Path(__file__).resolve().parent.parent / "data"
-DATA_DIR.mkdir(exist_ok=True)
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
-SQLALCHEMY_DATABASE_URL = f"sqlite:///{DATA_DIR / 'newsletter.db'}"
-
-engine = create_engine(
-    SQLALCHEMY_DATABASE_URL,
-    connect_args={"check_same_thread": False},
+SQLALCHEMY_DATABASE_URL = os.environ["DATABASE_URL"].replace(
+    "postgresql://", "postgresql+psycopg://", 1
 )
+
+engine = create_engine(SQLALCHEMY_DATABASE_URL, pool_pre_ping=True)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 

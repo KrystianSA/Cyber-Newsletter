@@ -51,6 +51,6 @@ Serwer wystartuje pod `http://localhost:8000`. Interaktywna dokumentacja: `http:
 
 ### Baza danych
 
-Na razie: SQLite, plik lokalny w `backend/data/newsletter.db` (tworzony automatycznie przy starcie, katalog `data/` jest w `.gitignore`). To rozwiązanie tymczasowe do testów — warstwa dostępu do danych jest przez SQLAlchemy, więc przejście na PostgreSQL w przyszłości sprowadza się do zmiany `SQLALCHEMY_DATABASE_URL` w `app/database.py` (i dodania sterownika, np. `psycopg`).
+PostgreSQL uruchamiany w Dockerze (`docker-compose.yml`, serwis `db`). Konfiguracja w pliku `.env` w katalogu głównym (wzór: `.env.example`): `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB` oraz `DATABASE_URL`, który czyta backend (`app/database.py`). Start bazy: `npm run db:up` (lub `docker compose up -d db`). Tabele tworzone są automatycznie przy starcie backendu.
 
 CORS w `app/main.py` jest skonfigurowany pod `http://localhost:5173` (domyślny port Vite dev servera).
