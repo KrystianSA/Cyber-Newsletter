@@ -18,8 +18,7 @@ Wymagane: Node.js, [uv](https://docs.astral.sh/uv/), Docker.
 cp .env.example     # uzupełnij dane dostępowe do bazy
 npm install
 (cd backend && uv sync)
-npm run db:up            # PostgreSQL w Dockerze
-npm run dev:all          # frontend + backend
+npm run dev:all          # PostgreSQL (Docker) + backend + frontend
 ```
 
 - Frontend: http://localhost:5173
