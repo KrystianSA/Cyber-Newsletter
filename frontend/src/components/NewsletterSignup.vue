@@ -36,12 +36,6 @@ async function handleSubmit() {
       body: JSON.stringify({ email: value }),
     })
 
-    if (res.status === 409) {
-      status.value = 'error'
-      errorMessage.value = 'Ten adres e-mail jest już zapisany.'
-      return
-    }
-
     if (!res.ok) {
       status.value = 'error'
       errorMessage.value = 'Coś poszło nie tak. Spróbuj ponownie.'

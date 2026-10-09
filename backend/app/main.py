@@ -1,13 +1,13 @@
 from contextlib import asynccontextmanager
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.database import Base, engine, get_db
 from app.models import Subscriber
-from app.schemas import SubscriberCreate, SubscriberOut
+from app.schemas import SubscribeResponse, SubscriberCreate
 
 
 @asynccontextmanager
@@ -31,14 +31,13 @@ def health():
     return {"status": "ok"}
 
 
-@app.post("/subscribers", response_model=SubscriberOut, status_code=201)
+@app.post("/subscribers", response_model=SubscribeResponse, status_code=201)
 def create_subscriber(payload: SubscriberCreate, db: Session = Depends(get_db)):
-    subscriber = Subscriber(email=payload.email)
-    db.add(subscriber)
+    db.add(Subscriber(email=payload.email))
     try:
         db.commit()
     except IntegrityError:
+        # Duplikat: ta sama odpowiedź co przy nowym adresie, żeby nie ujawniać,
+        # czyj e-mail jest już na liście (enumeracja adresów).
         db.rollback()
-        raise HTTPException(status_code=409, detail="Ten adres e-mail jest już zapisany.")
-    db.refresh(subscriber)
-    return subscriber
+    return SubscribeResponse(message="ok")
