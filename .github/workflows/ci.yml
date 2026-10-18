@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   linting:
-    name: Linting
+    name: Lint frontend
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -21,14 +21,20 @@ jobs:
     steps:
       - uses: actions/checkout@v7.0.1
 
-      - uses: actions/setup-node@v7.1.0
-        with:
-          node-version: 22.12.0
-          cache: npm
-          cache-dependency-path: frontend/package-lock.json
-
-      - run: npm ci
+      - uses: ./.github/actions/setup-frontend
 
       - run: npm run lint
 
-      # test
+  build-frontend:
+    name: Build frontend
+    needs: linting
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: ./.github/actions/setup-frontend
+
+      - run: npm run build
