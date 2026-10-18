@@ -1,0 +1,15 @@
+name: Setup frontend
+description: Installs Node.js (with npm cache) and frontend dependencies using npm ci
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v7.1.0
+      with:
+        node-version: 22.12.0
+        cache: npm
+        cache-dependency-path: frontend/package-lock.json
+
+    - run: npm ci
+      shell: bash
+      working-directory: frontend
