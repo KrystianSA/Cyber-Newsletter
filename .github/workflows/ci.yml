@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 jobs:
-  linting:
+  frontend-linting:
     name: Lint frontend
     runs-on: ubuntu-24.04
     defaults:
@@ -27,7 +27,7 @@ jobs:
 
   build-frontend:
     name: Build frontend
-    needs: linting
+    needs: frontend-linting
     runs-on: ubuntu-24.04
     defaults:
       run:
@@ -38,3 +38,32 @@ jobs:
       - uses: ./.github/actions/setup-frontend
 
       - run: npm run build
+
+  backend-integration-test:
+    name: Backend integration tests
+    runs-on: ubuntu-24.04
+    services:
+      postgres:
+        image: postgres:18.6
+        env:
+          POSTGRES_USER: test
+          POSTGRES_PASSWORD: test
+          POSTGRES_DB: cyber_newsletter_test
+        ports:
+          - 5433:5432
+        options: >-
+          --health-cmd "pg_isready -U test -d cyber_newsletter_test"
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://test:test@localhost:5433/cyber_newsletter_test
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: ./.github/actions/setup-backend
+
+      - run: uv run pytest

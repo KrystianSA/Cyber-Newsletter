@@ -33,7 +33,7 @@ def health():
 
 @app.post("/subscribers", response_model=SubscribeResponse, status_code=201)
 def create_subscriber(payload: SubscriberCreate, db: Session = Depends(get_db)):
-    db.add(Subscriber(email=payload.email))
+    db.add(Subscriber(email=payload.email.lower()))
     try:
         db.commit()
     except IntegrityError:

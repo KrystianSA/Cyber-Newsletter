@@ -12,6 +12,10 @@ dependencies = [
     "python-dotenv>=1.0",
 ]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+
 [dependency-groups]
 dev = [
     "httpx>=0.27.0",

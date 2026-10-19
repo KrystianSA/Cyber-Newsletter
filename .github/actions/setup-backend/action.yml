@@ -1,0 +1,16 @@
+name: Setup backend
+description: Installs uv 0.13.1, Python 3.13 and backend dependencies using uv sync --frozen
+
+runs:
+  using: composite
+  steps:
+    - uses: astral-sh/setup-uv@v6
+      with:
+        version: 0.13.1
+        python-version: "3.13"
+        enable-cache: true
+        cache-dependency-glob: backend/uv.lock
+
+    - run: uv sync --frozen
+      shell: bash
+      working-directory: backend
