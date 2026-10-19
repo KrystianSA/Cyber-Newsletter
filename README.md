@@ -2,6 +2,10 @@
 
 A landing page with a signup form for a cybersecurity newsletter. Email addresses are stored in a PostgreSQL database.
 
+<p align="center">
+  <img width="600" height="450" alt="Zrzut ekranu 2026-10-19 o 20 54 06" src="https://github.com/user-attachments/assets/3c969754-9164-4168-ba84-70d90ed15c82"/>
+</p>
+
 ## Tech stack
 
 - **Frontend:** Vue 3, Vite
