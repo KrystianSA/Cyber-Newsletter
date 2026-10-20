@@ -14,7 +14,9 @@ def test_new_email_is_saved(client, db, count_subscribers):
     assert db.query(Subscriber).one().email == "jan@x.pl"
 
 
-def test_duplicate_email_gives_same_response_and_no_second_row(client, count_subscribers):
+def test_duplicate_email_gives_same_response_and_no_second_row(
+    client, count_subscribers
+):
     first = client.post("/subscribers", json={"email": "jan@x.pl"})
     second = client.post("/subscribers", json={"email": "jan@x.pl"})
 

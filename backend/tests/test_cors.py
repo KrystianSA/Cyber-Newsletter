@@ -12,9 +12,7 @@ def preflight(client, origin):
     )
 
 
-@pytest.mark.parametrize(
-    "origin", ["http://localhost:5173", "http://127.0.0.1:5173"]
-)
+@pytest.mark.parametrize("origin", ["http://localhost:5173", "http://127.0.0.1:5173"])
 def test_preflight_allows_frontend_origins(client, origin):
     res = preflight(client, origin)
 

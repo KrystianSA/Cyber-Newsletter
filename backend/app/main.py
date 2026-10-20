@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from app.database import Base, engine, get_db
 from app.models import Subscriber
-from app.schemas import SubscribeResponse, SubscriberCreate
+from app.schemas import SubscriberCreate, SubscribeResponse
 
 
 @asynccontextmanager

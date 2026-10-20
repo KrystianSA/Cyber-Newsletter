@@ -39,6 +39,21 @@ jobs:
 
       - run: npm run build
 
+  backend-linting:
+    name: Lint backend
+    runs-on: ubuntu-24.04
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - uses: ./.github/actions/setup-backend
+
+      - run: uv run ruff check .
+
+      - run: uv run ruff format --check .
+
   backend-integration-test:
     name: Backend integration tests
     runs-on: ubuntu-24.04
