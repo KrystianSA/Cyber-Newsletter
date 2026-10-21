@@ -39,13 +39,22 @@ services:
     depends_on:
       dev-db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request as u; u.urlopen('http://localhost:8000/health')"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
 
   frontend:
     build:
       context: .
       dockerfile: frontend/Dockerfile
     ports:
-      - 127.0.0.1:5173:5173
+      - 127.0.0.1:5173:8080
+    depends_on:
+      backend:
+        condition: service_healthy
 
 volumes:
   db_data:

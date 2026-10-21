@@ -2,7 +2,7 @@
 import { computed, ref } from 'vue'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const API_URL = import.meta.env.VITE_API_URL ?? 'http://localhost:8000'
+const API_URL = '/api'
 
 const email = ref('')
 const status = ref('idle') // idle | loading | success | error
