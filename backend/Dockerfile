@@ -1,11 +1,11 @@
-FROM ghcr.io/astral-sh/uv:0.13.1-python3.13-bookworm-slim AS builder
+FROM ghcr.io/astral-sh/uv:0.13.1-python3.13-trixie-slim AS builder
 ENV UV_COMPILE_BYTECODE=1 UV_LINK_MODE=copy
 WORKDIR /app/backend
 COPY backend/pyproject.toml backend/uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 COPY backend/app ./app
 
-FROM python:3.13-slim-bookworm
+FROM python:3.13.17-slim-trixie AS runtime
 RUN useradd --system --create-home app
 WORKDIR /app/backend
 COPY --from=builder --chown=app:app /app/backend /app/backend
