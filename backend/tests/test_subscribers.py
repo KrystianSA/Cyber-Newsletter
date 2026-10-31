@@ -1,8 +1,7 @@
 import pytest
 
-from app.database import get_db
-from app.main import app
 from app.models import Subscriber
+from app.routes import get_db
 
 
 def test_new_email_is_saved(client, db, count_subscribers):
@@ -12,6 +11,23 @@ def test_new_email_is_saved(client, db, count_subscribers):
     assert res.json() == {"message": "ok"}
     assert count_subscribers() == 1
     assert db.query(Subscriber).one().email == "jan@x.pl"
+
+
+def test_delete_email_from_database(client, count_subscribers):
+    client.post("/subscribers", json={"email": "jan@x.pl"})
+    assert count_subscribers() == 1
+
+    res = client.request("DELETE", "/subscribers", json={"email": "jan@x.pl"})
+
+    assert res.status_code == 200
+    assert res.json() == {"message": "ok"}
+    assert count_subscribers() == 0
+
+
+def test_tried_email_to_delete_not_exist(client):
+    res = client.request("DELETE", "/subscribers", json={"email": "jan@x.pl"})
+
+    assert res.status_code == 200
 
 
 def test_duplicate_email_gives_same_response_and_no_second_row(
@@ -64,9 +80,9 @@ def test_email_case_is_normalized_so_variants_are_one_subscriber(
     assert db.query(Subscriber).one().email == "jan@x.pl"
 
 
-def test_session_still_works_after_duplicate_rollback(client, db, count_subscribers):
-    # Jedna współdzielona sesja dla wszystkich żądań: gdyby po IntegrityError
-    # nie było rollback(), następny zapis padłby na „zatrutej" sesji.
+def test_session_still_works_after_duplicate_rollback(
+    app, client, db, count_subscribers
+):
     app.dependency_overrides[get_db] = lambda: db
     try:
         assert client.post("/subscribers", json={"email": "a@x.pl"}).status_code == 201

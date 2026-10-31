@@ -1,9 +1,11 @@
 from datetime import UTC, datetime
 
 from sqlalchemy import DateTime, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
-from app.database import Base
+
+class Base(DeclarativeBase):
+    pass
 
 
 class Subscriber(Base):

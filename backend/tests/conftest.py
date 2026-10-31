@@ -1,45 +1,41 @@
-import os
+import pytest
+from fastapi.testclient import TestClient
+from sqlalchemy import text
 
-# Musi być przed jakimkolwiek importem `app`: app.database tworzy engine przy
-# imporcie, a load_dotenv() nie nadpisuje już ustawionych zmiennych.
-TEST_DATABASE_URL = os.environ.get(
-    "TEST_DATABASE_URL",
-    "postgresql://test:test@localhost:5433/cyber_newsletter_test",
-)
-# Bezpiecznik: testy robią TRUNCATE/DROP, nigdy nie na bazie developerskiej.
-assert TEST_DATABASE_URL.rsplit("/", 1)[-1].endswith("_test"), (
-    "TEST_DATABASE_URL musi wskazywać na bazę o nazwie kończącej się na _test"
-)
-os.environ["DATABASE_URL"] = TEST_DATABASE_URL
+from app.database import DatabaseConnector
+from app.factory import create_app
+from app.models import Base, Subscriber
 
-import pytest  # noqa: E402
-from fastapi.testclient import TestClient  # noqa: E402
-from sqlalchemy import text  # noqa: E402
 
-from app.database import Base, SessionLocal, engine  # noqa: E402
-from app.main import app  # noqa: E402
-from app.models import Subscriber  # noqa: E402
+@pytest.fixture(scope="session")
+def test_db():
+    connector = DatabaseConnector("TEST_DATABASE_URL")
+    if not connector.engine.url.database.endswith("_test"):
+        pytest.exit("TEST_DATABASE_URL musi wskazywać bazę kończącą się na _test")
+    return connector
+
+
+@pytest.fixture(scope="session")
+def app(test_db):
+    return create_app(test_db)
 
 
 @pytest.fixture(autouse=True)
-def clean_db():
-    """Znany stan początkowy: tabela istnieje i jest pusta przed każdym testem."""
-    Base.metadata.create_all(bind=engine)
-    with engine.begin() as conn:
+def clean_db(test_db):
+    Base.metadata.create_all(bind=test_db.engine)
+    with test_db.engine.begin() as conn:
         conn.execute(text("TRUNCATE subscribers RESTART IDENTITY"))
-    yield
 
 
 @pytest.fixture
-def client():
-    # `with` uruchamia lifespan (create_all) tak jak prawdziwy start serwera.
+def client(app):
     with TestClient(app) as c:
         yield c
 
 
 @pytest.fixture
-def db():
-    session = SessionLocal()
+def db(test_db):
+    session = test_db.SessionLocal()
     try:
         yield session
     finally:
