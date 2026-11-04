@@ -40,13 +40,15 @@ docker compose --profile test up -d --wait test-db
 docker compose --profile test down     # stop the test database
 ```
 
-The database URL can be overridden with the `TEST_DATABASE_URL` variable (the database name must end with `_test`).
+The test database is selected by the `TEST_DATABASE_URL` variable, which must be set (see `.env.example`; the database name must end with `_test`, otherwise the test run aborts).
 
 ## CI
 
 The [ci.yml](.github/workflows/ci.yml) workflow runs on push and pull requests to `main`:
 
 - `frontend-linting` → `build-frontend` (the build waits for a green lint),
-- `backend-integration-test` (runs in parallel; Postgres is provided via `services:`).
+- `backend-linting` (`ruff check` and `ruff format --check`, runs in parallel),
+- `backend-integration-test` (runs in parallel; Postgres is provided via `services:`),
+- `all-tests-check` (fails unless every job above succeeded).
 
 Environment setup lives in the `.github/actions/setup-frontend` and `setup-backend` actions. The uv version (0.13.1) is pinned in CI and in `backend/Dockerfile` — change it in both places at once.
