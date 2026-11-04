@@ -1,6 +1,6 @@
 from collections.abc import Iterator
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
@@ -44,16 +44,7 @@ def delete_subscriber(payload: SubscriberEmailToDelete, db: Session = Depends(ge
         db.query(Subscriber).filter(Subscriber.email == payload.email.lower()).first()
     )
     if not email_to_delete:
-        raise HTTPException(
-            status_code=status.HTTP_200_OK,
-            detail="Subscriber not found",
-        )
+        return SubscriberDeleteResponse(message="ok")
     db.delete(email_to_delete)
     db.commit()
     return SubscriberDeleteResponse(message="ok")
-
-
-@router.get("/subscribers", response_model=list[SubscriberCreate])
-def get_subscribers(db: Session = Depends(get_db)):
-    subscribers = db.query(Subscriber).all()
-    return [SubscriberCreate(email=subscriber.email) for subscriber in subscribers]
