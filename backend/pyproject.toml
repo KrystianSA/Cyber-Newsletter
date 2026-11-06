@@ -26,5 +26,5 @@ extend-immutable-calls = ["fastapi.Depends"]
 dev = [
     "httpx2>=2.16.0",
     "pytest>=8.3.0",
-    "ruff==0.17.1",
+    "ruff==0.17.3",
 ]
