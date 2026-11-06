@@ -50,7 +50,7 @@ Key technical decisions (separate test database, CI gate job, `main` branch rule
 
 The [ci.yml](.github/workflows/ci.yml) workflow runs on push and pull requests to `main`:
 
-- `frontend-linting` → `build-frontend` (the build waits for a green lint),
+- `frontend-linting` → `build-frontend` (builds the image from `frontend/Dockerfile`; waits for a green lint),
 - `backend-linting` (`ruff check` and `ruff format --check`, runs in parallel),
 - `backend-integration-test` (runs in parallel; Postgres is provided via `services:`),
 - `all-tests-check` (fails unless every job above succeeded).
