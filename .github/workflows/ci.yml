@@ -29,15 +29,10 @@ jobs:
     name: Build frontend
     needs: frontend-linting
     runs-on: ubuntu-24.04
-    defaults:
-      run:
-        working-directory: frontend
     steps:
       - uses: actions/checkout@v7.0.1
 
-      - uses: ./.github/actions/setup-frontend
-
-      - run: npm run build
+      - run: docker build -f frontend/Dockerfile -t cyber-newsletter-frontend:ci .
 
   backend-linting:
     name: Lint backend
@@ -83,10 +78,19 @@ jobs:
 
       - run: uv run pytest
 
+  build-backend:
+    name: Build backend
+    needs: [backend-linting, backend-integration-test]
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7.0.1
+
+      - run: docker build -f backend/Dockerfile -t cyber-newsletter-backend:ci .
+
   all-tests-check:
     name: Check all tests
     runs-on: ubuntu-24.04
-    needs: [frontend-linting, build-frontend, backend-linting, backend-integration-test]
+    needs: [frontend-linting, build-frontend, build-backend, backend-linting, backend-integration-test]
     if: always()
     steps:
       - name: Fail if any required job did not succeed
