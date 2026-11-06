@@ -42,6 +42,10 @@ docker compose --profile test down     # stop the test database
 
 The test database is selected by the `TEST_DATABASE_URL` variable, which must be set (see `.env.example`; the database name must end with `_test`, otherwise the test run aborts).
 
+## Architecture decisions
+
+Key technical decisions (separate test database, CI gate job, `main` branch ruleset) are recorded in [docs/architecture-decisions.md](docs/architecture-decisions.md). The file is written in Polish.
+
 ## CI
 
 The [ci.yml](.github/workflows/ci.yml) workflow runs on push and pull requests to `main`:
