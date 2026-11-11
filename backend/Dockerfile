@@ -5,7 +5,7 @@ COPY backend/pyproject.toml backend/uv.lock ./
 RUN uv sync --frozen --no-dev --no-install-project
 COPY backend/app ./app
 
-FROM python:3.13.17-slim-trixie AS runtime
+FROM python:3.15.0-slim-trixie AS runtime
 RUN useradd --system --create-home app
 WORKDIR /app/backend
 COPY --from=builder --chown=app:app /app/backend /app/backend
