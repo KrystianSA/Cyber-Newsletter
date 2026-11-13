@@ -30,9 +30,18 @@ jobs:
     needs: frontend-linting
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v7.0.1
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
 
-      - run: docker build -f frontend/Dockerfile -t cyber-newsletter-frontend:ci .
+      - name: Build an image from Dockerfile
+        run: docker build -f frontend/Dockerfile -t cyber-newsletter-frontend:ci .
+      
+      - name: Run Trivy vulnerability scanner in image mode
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 #0.36.0
+        with:
+          scan-type: 'image'
+          image-ref: 'cyber-newsletter-frontend:ci'
+          trivy-config: trivy.yaml
 
   backend-linting:
     name: Lint backend
@@ -83,9 +92,18 @@ jobs:
     needs: [backend-linting, backend-integration-test]
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v7.0.1
+      - name: Checkout code
+        uses: actions/checkout@v7.0.1
 
-      - run: docker build -f backend/Dockerfile -t cyber-newsletter-backend:ci .
+      - name: Build an image from Dockerfile
+        run: docker build -f backend/Dockerfile -t cyber-newsletter-backend:ci .
+
+      - name: Run Trivy vulnerability scanner in image mode
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 #0.36.0
+        with:
+          scan-type: 'image'
+          image-ref: 'cyber-newsletter-backend:ci'
+          trivy-config: trivy.yaml
 
   all-tests-check:
     name: Check all tests
