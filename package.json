@@ -11,6 +11,6 @@
     "dev:all": "npm run db:up && concurrently -n frontend,backend -c blue,green \"npm run dev:frontend\" \"npm run dev:backend\""
   },
   "devDependencies": {
-    "concurrently": "^9.1.0"
+    "concurrently": "^9.2.5"
   }
 }
